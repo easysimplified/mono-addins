@@ -97,15 +97,17 @@ namespace Mono.Addins.Database
 			int i = fullName.IndexOf (',');
 			string name = fullName.Substring (0, i);
 			if (name == "Mono.Addins")
-				return GetType ().Assembly.Location;
-			
+				return typeof (AssemblyIndex).Assembly.Location;
+
 			if (!assemblyLocations.TryGetValue (name, out var list))
 				return null;
 
 			string lastAsm = null;
-			foreach (string file in list.ToArray ()) {
+			for (int n = list.Count - 1; n >= 0; --n) {
 				try {
-					list.Remove (file);
+					var file = list[n];
+					list.RemoveAt(n);
+
 					AssemblyName aname = AssemblyName.GetAssemblyName (file);
 					lastAsm = file;
 					assemblyLocationsByFullName [aname.FullName] = file;
@@ -117,8 +119,12 @@ namespace Mono.Addins.Database
 				}
 			}
 
+			// If we got here, we removed all the list's items.
+			assemblyLocations.Remove (name);
+
 			if (lastAsm != null) {
 				// If an exact version is not found, just take any of them
+				assemblyLocationsByFullName[fullName] = lastAsm;
 				return lastAsm;
 			}
 			return null;

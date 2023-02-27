@@ -328,10 +328,7 @@ namespace Mono.Addins.Setup
 			foreach (Addin addin in list) {
 				if (!showAll && IsHidden (addin))
 					continue;
-				Console.Write (" - " + addin.Name + " " + addin.Version);
-				if (showAll)
-					Console.Write (" (" + addin.AddinFile + ")");
-				Console.WriteLine ();
+				Console.WriteLine("[{0}] {1} {2} {3}", addin.Enabled ? "Enabled" : "Disabled", addin.Id, addin.Name, showAll ? $"({addin.AddinFile})": string.Empty);
 			}
 		}
 		
@@ -394,6 +391,24 @@ namespace Mono.Addins.Setup
 		void UpdateAvailableAddins (string[] args)
 		{
 			service.Repositories.UpdateAllRepositories (new ConsoleProgressStatus (verbose));
+		}
+
+		void EnableAddins (string[] args)
+		{
+			var addins = args.Where(a => a != "-y");
+			foreach (string addinId in addins)
+			{
+				registry.EnableAddin (addinId);
+			}
+		}
+
+		void DisableAddins(string[] args)
+		{
+			var addins = args.Where(a => a != "-y");
+			foreach (string addinId in addins)
+			{
+				registry.DisableAddin(addinId);
+			}
 		}
 		
 		void AddRepository (string[] args)
@@ -483,6 +498,9 @@ namespace Mono.Addins.Setup
 				break;
 			case "vsix":
 				format = PackageFormat.Vsix;
+				break;
+			case "nupkg":
+				format = PackageFormat.NuGet;
 				break;
 			default:
 				throw new ArgumentException ($"Unsupported package format \"{formatString}\", supported formats are mpack and vsix.");
@@ -1057,6 +1075,18 @@ namespace Mono.Addins.Setup
 			cmd.Description = "Lists available add-in updates.";
 			cmd.AppendDesc ("Prints a list of available add-in updates in the registered repositories.");
 			commands.Add (cmd);
+
+			cmd = new SetupCommand(cat, "enable", "e", new SetupCommandHandler (EnableAddins));
+			cmd.Description = "Enables addins.";
+			cmd.Usage = "<id> ...";
+			cmd.AppendDesc("Enables an add-in which has been disabled");
+			commands.Add(cmd);
+
+			cmd = new SetupCommand(cat, "disable", "d", new SetupCommandHandler(DisableAddins));
+			cmd.Description = "Disables addins.";
+			cmd.Usage = "<id> ...";
+			cmd.AppendDesc("Disables an add-in which has been enabled");
+			commands.Add(cmd);
 			
 			cat = "Repository Commands";
 
@@ -1150,8 +1180,8 @@ namespace Mono.Addins.Setup
 	
 			cmd = new SetupCommand (cat, "pack", "p", new SetupCommandHandler (BuildPackage));
 			cmd.Description = "Creates a package from an add-in configuration file.";
-			cmd.Usage = "<file-path> [-d:output-directory] [-format:(mpack|vsix)] [-debugSymbols:(true|false)]";
-			cmd.AppendDesc ("Creates an add-in package (.mpack or .vsix file) which includes all files ");
+			cmd.Usage = "<file-path> [-d:output-directory] [-format:(mpack|vsix|nupkg)] [-debugSymbols:(true|false)]";
+			cmd.AppendDesc ("Creates an add-in package (.mpack, .vsix or .nupkg file) which includes all files ");
 			cmd.AppendDesc ("needed to deploy an add-in. The command parameter is the path to");
 			cmd.AppendDesc ("the add-in's configuration file. If 'debugSymbols' is set to true");
 			cmd.AppendDesc ("then pdb or mdb debug symbols will automatically be included in the");
@@ -1234,4 +1264,3 @@ namespace Mono.Addins.Setup
 	/// </summary>
 	public delegate void SetupCommandHandler (string[] args);
 }
-

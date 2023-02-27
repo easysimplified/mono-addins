@@ -1,5 +1,5 @@
 //
-// TreeNodeCollection.cs
+// AddinDatabase.cs
 //
 // Author:
 //   Lluis Sanchez Gual
@@ -28,59 +28,42 @@
 
 
 using System;
+using System.Threading;
 using System.Collections;
+using System.Collections.Specialized;
+using System.IO;
+using System.Xml;
+using System.Reflection;
+using Mono.Addins.Description;
 using System.Collections.Generic;
 using System.Linq;
+using Mono.Addins.Serialization;
 
-namespace Mono.Addins
+namespace Mono.Addins.Database
 {
-	class TreeNodeCollection: IEnumerable
+	class ProcessFailedException : Exception
 	{
-		List<TreeNode> list;
-		
-		internal static TreeNodeCollection Empty = new TreeNodeCollection (null);
-		
-		public TreeNodeCollection (List<TreeNode> list)
+		StringCollection progessLog;
+
+		public ProcessFailedException(StringCollection progessLog) : this(progessLog, null)
 		{
-			this.list = list;
 		}
-		
-		public IEnumerator GetEnumerator ()
+
+		public ProcessFailedException(StringCollection progessLog, Exception ex) : base("Setup process failed.", ex)
 		{
-			if (list != null)
-				return list.GetEnumerator ();
-			else
-				return Type.EmptyTypes.GetEnumerator ();
+			this.progessLog = progessLog;
 		}
-		
-		public TreeNode this [int n] {
-			get { 
-				if (list != null)
-					return list [n];
-				else
-					throw new System.IndexOutOfRangeException ();
-			}
-		}
-		
-		public int IndexOfNode (string id)
+
+		public StringCollection ProgessLog
 		{
-			for (int n=0; n<Count; n++) {
-				if (this [n].Id == id)
-					return n;
-			}
-			return -1;
+			get { return progessLog; }
 		}
-		
-		public int Count {
-			get { return list != null ? list.Count : 0; }
-		}
-		
-		public TreeNodeCollection Clone ()
+
+		public string LastLog
 		{
-			if (list != null)
-				return new TreeNodeCollection (list.ToList ());
-			else
-				return Empty;
+			get { return progessLog.Count > 0 ? progessLog[progessLog.Count - 1] : ""; }
 		}
 	}
 }
+
+
