@@ -33,7 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="Mono.Posix" />
-    <PackageReference Include="GtkSharp" Version="3.22.25.128" />
+    <PackageReference Include="GtkSharp" Version="3.24.24.95" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">
