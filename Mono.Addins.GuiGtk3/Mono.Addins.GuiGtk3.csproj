@@ -20,6 +20,30 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="icons\**\*.png" LinkBase="icons" />
+ <EmbeddedResource Include="interfaces\AddinManagerDialog.ui.xml">
+      <LogicalName>Mono.Addins.GuiGtk3.interfaces.AddinManagerDialog.ui</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="interfaces\AddinInfoView.ui.xml">
+      <LogicalName>Mono.Addins.GuiGtk3.interfaces.AddinInfoView.ui</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="interfaces\AddinInstallerDialog.ui.xml">
+      <LogicalName>Mono.Addins.GuiGtk3.interfaces.AddinInstallerDialog.ui</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="interfaces\ManageSitesDialog.ui.xml">
+      <LogicalName>Mono.Addins.GuiGtk3.interfaces.ManageSitesDialog.ui</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="interfaces\InstallDialog.ui.xml">
+      <LogicalName>Mono.Addins.GuiGtk3.interfaces.InstallDialog.ui</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="interfaces\ProgressDialog.ui.xml">
+      <LogicalName>Mono.Addins.GuiGtk3.interfaces.ProgressDialog.ui</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="interfaces\NewSiteDialog.ui.xml">
+      <LogicalName>Mono.Addins.GuiGtk3.interfaces.NewSiteDialog.ui</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="interfaces\ErrorDialog.ui.xml">
+      <LogicalName>Mono.Addins.GuiGtk3.interfaces.ErrorDialog.ui</LogicalName>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Mono.Addins.Setup\Mono.Addins.Setup.csproj" />
