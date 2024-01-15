@@ -5,7 +5,7 @@
   <object class="GtkBox" id="AddinInfoView">
     <property name="can_focus">False</property>
             <property name="expand">False</property>
-            <property name="fill">True</property>
+           <!-- <property name="fill">True</property>-->
     <child>
       <object class="GtkEventBox" id="ebox">
         <property name="can_focus">False</property>
