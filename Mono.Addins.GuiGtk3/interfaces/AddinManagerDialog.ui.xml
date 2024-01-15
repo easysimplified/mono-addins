@@ -15,7 +15,7 @@
         <property name="orientation">vertical</property>
         <property name="spacing">3</property>
 		<property name="expand">True</property>
-        <property name="fill">True</property>
+       <!-- <property name="fill">True</property>-->
         <child>
           <object class="GtkBox" id="vbox93">
             <property name="can_focus">False</property>
@@ -23,7 +23,7 @@
             <property name="orientation">vertical</property>
             <property name="spacing">6</property>
             <property name="expand">True</property>
-            <property name="fill">True</property>
+           <!-- <property name="fill">True</property>-->
             <child>
               <object class="GtkHBox" id="hbox65">
                 <property name="can_focus">False</property>
@@ -85,11 +85,11 @@
                                                       <signal name="EnableDisableClicked" handler="OnEnableDisableClicked" swapped="no"/>
                                                    </object>-->                                </child>
                                 <property name="expand">True</property>
-                                <property name="fill">True</property>
+                               <!-- <property name="fill">True</property>-->
                               </object>
                               <packing>
                                 <property name="expand">False</property>
-                                <property name="fill">False</property>
+                               <!-- <property name="fill">False</property>-->
                                 <property name="position">1</property>
                               </packing>
                             </child>
