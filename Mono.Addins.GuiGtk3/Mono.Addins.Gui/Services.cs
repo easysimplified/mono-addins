@@ -31,7 +31,9 @@
 
 using System;
 using Gtk;
+#if !WINDOWS
 using Mono.Unix;
+#endif
 using Mono.Addins.Setup;
 using Mono.Addins.Description;
 using System.Linq;
@@ -63,17 +65,21 @@ namespace Mono.Addins.GuiGtk3
 			ErrorDialog dlg = new ErrorDialog (builder, builder.GetObject ("ErrorDialog").Handle);
 			
 			if (message == null) {
+				#if !WINDOWS
 				if (ex != null)
 					dlg.Message = string.Format (Catalog.GetString ("Exception occurred: {0}"), ex.Message);
 				else {
 					dlg.Message = "An unknown error occurred";
 					dlg.AddDetails (Environment.StackTrace, false);
 				}
+				#endif
 			} else
 				dlg.Message = message;
 			
 			if (ex != null) {
+				#if !WINDOWS
 				dlg.AddDetails (string.Format (Catalog.GetString ("Exception occurred: {0}"), ex.Message) + "\n\n", true);
+				#endif
 				dlg.AddDetails (ex.ToString (), false);
 			}
 

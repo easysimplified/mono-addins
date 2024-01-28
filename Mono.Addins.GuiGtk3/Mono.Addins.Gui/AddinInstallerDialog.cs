@@ -33,7 +33,9 @@ using System.Threading;
 using System.Collections;
 using Mono.Addins.Setup;
 using Mono.Addins.Description;
+#if !WINDOWS
 using Mono.Unix;
+#endif
 using Gtk;
 using UI = Gtk.Builder.ObjectAttribute;
 
@@ -167,7 +169,9 @@ namespace Mono.Addins.GuiGtk3
 		protected virtual void OnButtonOkClicked (object sender, System.EventArgs e)
 		{
 			if (addinsNotFound) {
+				#if !WINDOWS
 				errMessage = Catalog.GetString ("Some of the required extension packages were not found");
+				#endif
 				Respond (Gtk.ResponseType.Ok);
 			}
 			else {
@@ -178,8 +182,10 @@ namespace Mono.Addins.GuiGtk3
 				bool res = setup.Install (this, entries);
 				if (!res) {
 					buttonCancel.Sensitive = buttonOk.Sensitive = false;
+					#if !WINDOWS
 					if (errMessage == null)
 						errMessage = Catalog.GetString ("Installation failed");
+					#endif
 					Services.ShowError (null, errMessage, this, true);
 				}
 			}

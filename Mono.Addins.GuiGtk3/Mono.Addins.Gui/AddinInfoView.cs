@@ -30,7 +30,9 @@ using System.IO;
 using System.Collections.Generic;
 using Mono.Addins.Setup;
 using System.Text;
+#if !WINDOWS
 using Mono.Unix;
+#endif
 using System.Linq;
 using UI = Gtk.Builder.ObjectAttribute;
 using Gtk;
@@ -155,7 +157,9 @@ namespace Mono.Addins.GuiGtk3
 			else if (data.Length > 1) {
 				headerBox.Hide ();
 				StringBuilder sb = new StringBuilder ();
+				#if !WINDOWS
 				sb.Append (Catalog.GetString ("Multiple selection:\n\n"));
+				#endif
 				bool allowUpdate = AllowInstall;
 				bool allowInstall = true;
 				bool allowUninstall = AllowInstall;
@@ -192,10 +196,14 @@ namespace Mono.Addins.GuiGtk3
 					
 					if (allowEnable) {
 						btnDisable.Visible = true;
+						#if !WINDOWS
 						btnDisable.Label = Catalog.GetString ("Enable");
+						#endif
 					} else if (allowDisable) {
 						btnDisable.Visible = true;
+						#if !WINDOWS
 						btnDisable.Label = Catalog.GetString ("Disable");
+						#endif
 					} else
 						btnDisable.Visible = false;
 					btnInstall.Visible = allowInstall;
@@ -210,7 +218,9 @@ namespace Mono.Addins.GuiGtk3
 				btnUninstall.Visible = false;
 				btnUpdate.Visible = false;
 				eboxButs.Visible = false;
+				#if !WINDOWS
 				labelDesc.Text = Catalog.GetString ("No selection");
+				#endif
 			}
 		}
 		
@@ -249,11 +259,13 @@ namespace Mono.Addins.GuiGtk3
 					updateInfo = sinfo;
 				selectedEntry.Add (entry);
 				string rname = !string.IsNullOrEmpty (entry.RepositoryName) ? entry.RepositoryName : entry.RepositoryUrl;
+				#if !WINDOWS
 				repo = "<small><b>" + Catalog.GetString ("Available in repository:") + "</b>\n" + GLib.Markup.EscapeText (rname) + "\n\n</small>";
 				foreach (var prop in sinfo.Properties) {
 					if (prop.Name.StartsWith ("PreviewImage"))
 						previewImages.Add (new ImageContainer (entry, prop.Value));
 				}
+				#endif
 				string icon32 = sinfo.Properties.GetPropertyValue ("Icon32");
 				if (icon32.Length > 0)
 					titleIcon = new ImageContainer (entry, icon32);
@@ -281,31 +293,39 @@ namespace Mono.Addins.GuiGtk3
 					btnInstall.Visible = false;
 					btnUpdate.Visible = updateInfo != null && AllowInstall;
 					btnDisable.Visible = true;
+					#if !WINDOWS
 					btnDisable.Label = installed.Enabled ? Catalog.GetString ("Disable") : Catalog.GetString ("Enable");
+					#endif
 					btnDisable.Visible = installed.Description.CanDisable;
 					btnUninstall.Visible = installed.Description.CanUninstall;
 					version = installed.Version;
 					var missingDeps = Services.GetMissingDependencies (installed);
 					if (updateInfo != null) {
 						newVersion = updateInfo.Version;
+						#if !WINDOWS
 						labelHeader.Markup = "<b><span color='black'>" + Catalog.GetString ("Update available") + "</span></b>";
+						#endif
 //						topHeaderBox.BackgroundColor = new Gdk.Color (0, 132, 208);
 						imageHeader.Pixbuf = Gdk.Pixbuf.LoadFromResource ("update-16.png");
 						topHeaderBox.BackgroundColor = new Gdk.Color (255, 176, 0);
 						topHeaderBox.Show ();
 					}
 					else if (missingDeps.Any ()) {
+						#if !WINDOWS
 						labelHeader.Markup = "<b><span color='black'>" + Catalog.GetString ("This extension package can't be loaded due to missing dependencies") + "</span></b>";
+						#endif
 						topHeaderBox.BackgroundColor = new Gdk.Color (255, 176, 0);
 						imageHeader.SetFromStock (Gtk.Stock.DialogWarning, Gtk.IconSize.Menu);
 						topHeaderBox.Show ();
 						missingDepsTxt = "";
+						#if !WINDOWS
 						foreach (var mdep in missingDeps) {
 							if (mdep.Found != null)
 								missingDepsTxt += "\n" + string.Format (Catalog.GetString ("Required: {0} v{1}, found v{2}"), mdep.Addin, mdep.Required, mdep.Found);
 							else
 								missingDepsTxt += "\n" + string.Format (Catalog.GetString ("Missing: {0} v{1}"), mdep.Addin, mdep.Required);
 						}
+						#endif
 					}
 				} else {
 					btnInstall.Visible = AllowInstall;
@@ -317,6 +337,7 @@ namespace Mono.Addins.GuiGtk3
 				labelName.Markup = "<b><big>" + GLib.Markup.EscapeText(sinfo.Name) + "</big></b>";
 				
 				string ver;
+				#if !WINDOWS
 				if (newVersion != null) {
 					ver =  "<small><b>" + Catalog.GetString ("Installed version") + ":</b> " + version + "</small>\n";
 					ver += "<small><b>" + Catalog.GetString ("Repository version") + ":</b> " + newVersion + "</small>";
@@ -329,7 +350,7 @@ namespace Mono.Addins.GuiGtk3
 				if (missingDepsTxt != null)
 					ver += "\n\n" + GLib.Markup.EscapeText (Catalog.GetString ("The following dependencies required by this extension package are not available:")) + missingDepsTxt;
 				labelVersion.Markup = ver;
-				
+				#endif
 				string desc = GLib.Markup.EscapeText (sinfo.Description);
 				labelDesc.Markup = repo + GLib.Markup.EscapeText (desc);
 				

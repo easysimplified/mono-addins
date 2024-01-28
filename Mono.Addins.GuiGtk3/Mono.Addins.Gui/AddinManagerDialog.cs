@@ -32,7 +32,9 @@ using System;
 using Gtk;
 using Mono.Addins.Setup;
 using Mono.Addins;
+#if !WINDOWS
 using Mono.Unix;
+#endif
 using System.Threading;
 using System.Text;
 using System.Collections.Generic;
@@ -166,15 +168,19 @@ namespace Mono.Addins.GuiGtk3
 			
 			HBox tab = new HBox (false, 3);
 			tab.PackStart (new Image (Gdk.Pixbuf.LoadFromResource ("plugin-22.png")), false, false, 0);
+			#if !WINDOWS
 			installedTabLabel = new Label (Catalog.GetString ("Installed"));
 			tab.PackStart (installedTabLabel, true, true, 0);
+			#endif
 			tab.BorderWidth = 3;
 			tab.ShowAll ();
 			notebook.SetTabLabel (notebook.GetNthPage (0), tab);
 			
 			tab = new HBox (false, 3);
 			tab.PackStart (new Image (Gdk.Pixbuf.LoadFromResource ("plugin-update-22.png")), false, false, 0);
+			#if !WINDOWS
 			updatesTabLabel = new Label (Catalog.GetString ("Updates"));
+			#endif
 			tab.PackStart (updatesTabLabel, true, true, 0);
 			tab.BorderWidth = 3;
 			tab.ShowAll ();
@@ -182,7 +188,9 @@ namespace Mono.Addins.GuiGtk3
 			
 			tab = new HBox (false, 3);
 			tab.PackStart (new Image (Gdk.Pixbuf.LoadFromResource ("update-16.png")), false, false, 0);
+			#if !WINDOWS
 			galleryTabLabel = new Label (Catalog.GetString ("Gallery"));
+			#endif
 			tab.PackStart (galleryTabLabel, true, true, 0);
 			tab.BorderWidth = 3;
 			tab.ShowAll ();
@@ -309,9 +317,9 @@ namespace Mono.Addins.GuiGtk3
 				tree.ShowEmptyMessage ();
 			
 			UpdateAddinInfo ();
-			
+			#if !WINDOWS
 			installedTabLabel.Text = Catalog.GetString ("Installed");
-			
+			#endif
 			if (filterEntry.Text.Length != 0 && count > 0)
 				installedTabLabel.Text += " (" + count + ")";
 		}
@@ -320,15 +328,17 @@ namespace Mono.Addins.GuiGtk3
 		{
 			int i = repoCombo.Active;
 			repoStore.Clear ();
-			
+			#if !WINDOWS
 			repoStore.AppendValues (Catalog.GetString ("All repositories"), AllRepoMarker);
-			
+			#endif
 			foreach (AddinRepository rep in service.Repositories.GetRepositories ()) {
 				if (rep.Enabled)
 					repoStore.AppendValues (rep.Title, rep.Url);
 			}
 			repoStore.AppendValues ("---", "");
+			#if !WINDOWS
 			repoStore.AppendValues (Catalog.GetString ("Manage Repositories..."), ManageRepoMarker);
+			#endif
 			repoCombo.Active = i;
 		}
 		
@@ -384,9 +394,9 @@ namespace Mono.Addins.GuiGtk3
 				galleryTree.RestoreStatus (s);
 			else
 				galleryTree.ShowEmptyMessage ();
-			
+			#if !WINDOWS
 			galleryTabLabel.Text = Catalog.GetString ("Gallery");
-			
+			#endif
 			if (filterEntry.Text.Length != 0 && count > 0)
 				galleryTabLabel.Text += " (" + count + ")";
 		}
@@ -422,9 +432,10 @@ namespace Mono.Addins.GuiGtk3
 				updatesTree.AddAddin (arep.Addin, arep, status | AddinStatus.HasUpdate);
 				count++;
 			}
-			
+			#if !WINDOWS
 			labelUpdates.Text = string.Format (Catalog.GetPluralString ("{0} update available", "{0} updates available", count), count);
 			updatesTabLabel.Text = Catalog.GetString ("Updates");
+			#endif
 			if (count > 0)
 				updatesTabLabel.Text += " (" + count + ")";
 			
@@ -579,6 +590,7 @@ namespace Mono.Addins.GuiGtk3
 		protected virtual void OnButtonInstallFromFileClicked (object sender, System.EventArgs e)
 		{
 			string[] files;
+			#if !WINDOWS
 			Gtk.FileChooserDialog dlg = new Gtk.FileChooserDialog (Catalog.GetString ("Install Extension Package"), this, FileChooserAction.Open);
 			try {
 				if (lastFolder != null)
@@ -606,11 +618,13 @@ namespace Mono.Addins.GuiGtk3
 			} finally {
 				dlg.Destroy ();
 			}
-			
+			#endif
 			Gtk.Builder builder = new Gtk.Builder (null, "Mono.Addins.GuiGtk3.interfaces.InstallDialog.ui", null);
 			InstallDialog idlg = new InstallDialog (service, builder, builder.GetObject ("InstallDialog").Handle);
 			try {
+				#if !WINDOWS
 				idlg.InitForInstall (files);
+				#endif
 				if (idlg.Run () == (int) Gtk.ResponseType.Ok)
 					LoadAll ();
 			} finally {

@@ -30,7 +30,9 @@ using System.Threading;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Diagnostics;
+#if !WINDOWS
 using Mono.Unix;
+#endif
 using Gtk;
 using Mono.Addins.Setup;
 using Mono.Addins.Description;

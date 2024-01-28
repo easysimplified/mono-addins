@@ -35,7 +35,9 @@ using Gtk;
 using Gdk;
 using Mono.Addins;
 using Mono.Addins.Setup;
+#if !WINDOWS
 using Mono.Unix;
+#endif
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
@@ -101,7 +103,9 @@ namespace Mono.Addins.GuiGtk3
 		
 		internal void ShowEmptyMessage ()
 		{
+			#if !WINDOWS
 			treeStore.AppendValues (null, null, Catalog.GetString ("No extension packages found"), "", false, false, null, false);
+			#endif
 		}
 		
 		protected virtual void AddStoreTypes (ArrayList list)
@@ -119,7 +123,9 @@ namespace Mono.Addins.GuiGtk3
 		protected virtual void CreateColumns ()
 		{
 			TreeViewColumn col = new TreeViewColumn ();
+			#if !WINDOWS
 			col.Title = Catalog.GetString ("Extension Package");
+			#endif
 			
 			CellRendererToggle crtog = new CellRendererToggle ();
 			crtog.Activatable = true;
@@ -142,7 +148,9 @@ namespace Mono.Addins.GuiGtk3
 			treeView.AppendColumn (col);
 			
 			col = new TreeViewColumn ();
+			#if !WINDOWS
 			col.Title = Catalog.GetString ("Version");
+			#endif
 			col.PackStart (crt, true);
 			col.AddAttribute (crt, "markup", ColVersion);
 			versionColumn = col;
@@ -212,8 +220,10 @@ namespace Mono.Addins.GuiGtk3
 			if (ShowCategories) {
 				TreeIter piter = TreeIter.Zero;
 				if (info.Category == "") {
+					#if !WINDOWS
 					string otherCat = Catalog.GetString ("Other");
 					piter = FindCategory (otherCat);
+					#endif
 				} else {
 					piter = FindCategory (info.Category);
 				}

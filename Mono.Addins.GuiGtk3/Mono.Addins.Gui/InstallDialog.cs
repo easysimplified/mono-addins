@@ -29,7 +29,9 @@ using System;
 using Mono.Addins.Setup;
 using Mono.Addins.Description;
 using System.Text;
+#if !WINDOWS
 using Mono.Unix;
+#endif
 using System.Threading;
 using System.Linq;
 using System.Collections.Generic;
@@ -94,19 +96,24 @@ namespace Mono.Addins.GuiGtk3
 		public void InitForUninstall (Addin[] info)
 		{
 			this.uninstallIds = info.Select (a => a.Id);
+			#if !WINDOWS
 			buttonOk.Label = Catalog.GetString ("Uninstall");
-			
+			#endif
 			HashSet<Addin> sinfos = new HashSet<Addin> ();
 			
 			StringBuilder sb = new StringBuilder ();
+			#if !WINDOWS
 			sb.Append ("<b>").Append (Catalog.GetString ("The following packages will be uninstalled:")).Append ("</b>\n\n");
+			#endif
 			foreach (var a in info) {
 				sb.Append (a.Name + "\n\n");
 				sinfos.UnionWith (service.GetDependentAddins (a.Id, true));
 			}
 			
 			if (sinfos.Count > 0) {
+				#if !WINDOWS
 				sb.Append ("<b>").Append (Catalog.GetString ("There are other extension packages that depend on the previous ones which will also be uninstalled:")).Append ("</b>\n\n");
+				#endif
 				foreach (Addin si in sinfos)
 					sb.Append (si.Description.Name + "\n");
 			}
@@ -141,7 +148,9 @@ namespace Mono.Addins.GuiGtk3
 			
 			StringBuilder sb = new StringBuilder ();
 			if (!res) {
+				#if !WINDOWS
 				sb.Append ("<b><span foreground=\"red\">").Append (Catalog.GetString ("The selected extension packages can't be installed because there are dependency conflicts.")).Append ("</span></b>\n");
+				#endif
 				foreach (string s in m.Errors) {
 					sb.Append ("<b><span foreground=\"red\">" + s + "</span></b>\n");
 				}
@@ -154,18 +163,23 @@ namespace Mono.Addins.GuiGtk3
 				}
 				sb.Append ("\n");
 			}
-			
+			#if !WINDOWS
 			sb.Append ("<b>").Append (Catalog.GetString ("The following packages will be installed:")).Append ("</b>\n\n");
+			#endif
 			foreach (Package p in packs) {
 				sb.Append (p.Name);
+				#if !WINDOWS
 				if (!p.SharedInstall)
 					sb.Append (Catalog.GetString (" (in user directory)"));
+					#endif
 				sb.Append ("\n");
 			}
 			sb.Append ("\n");
 			
 			if (toUninstall.Count > 0) {
+				#if !WINDOWS
 				sb.Append ("<b>").Append (Catalog.GetString ("The following packages need to be uninstalled:")).Append ("</b>\n\n");
+				#endif
 				foreach (Package p in toUninstall) {
 					sb.Append (p.Name + "\n");
 				}
@@ -173,7 +187,9 @@ namespace Mono.Addins.GuiGtk3
 			}
 			
 			if (unresolved.Count > 0) {
+				#if !WINDOWS
 				sb.Append ("<b>").Append (Catalog.GetString ("The following dependencies could not be resolved:")).Append ("</b>\n\n");
+				#endif
 				foreach (Dependency p in unresolved) {
 					sb.Append (p.Name + "\n");
 				}
@@ -207,8 +223,10 @@ namespace Mono.Addins.GuiGtk3
 		protected virtual void OnButtonCancelClicked (object sender, System.EventArgs e)
 		{
 			if (installing) {
+				#if !WINDOWS
 				if (Services.AskQuestion (Catalog.GetString ("Are you sure you want to cancel the installation?")))
 					installMonitor.Cancel ();
+					#endif
 			} else
 				Respond (Gtk.ResponseType.Cancel);
 		}
@@ -226,15 +244,23 @@ namespace Mono.Addins.GuiGtk3
 			ThreadStart oper;
 				
 			if (uninstallIds == null) {
+				#if !WINDOWS
 				installMonitor = new InstallMonitor (globalProgressLabel, mainProgressBar, Catalog.GetString ("Installing Extension Packages"));
+				#endif
 				oper = new ThreadStart (RunInstall);
+				#if !WINDOWS
 				errmessage = Catalog.GetString ("The installation failed!");
 				warnmessage = Catalog.GetString ("The installation has completed with warnings.");
+				#endif
 			} else {
+				#if !WINDOWS
 				installMonitor = new InstallMonitor (globalProgressLabel, mainProgressBar, Catalog.GetString ("Uninstalling Extension Packages"));
+				#endif
 				oper = new ThreadStart (RunUninstall);
+				#if !WINDOWS
 				errmessage = Catalog.GetString ("The uninstallation failed!");
 				warnmessage = Catalog.GetString ("The uninstallation has completed with warnings.");
+				#endif
 			}
 			
 			installing = true;
@@ -249,22 +275,27 @@ namespace Mono.Addins.GuiGtk3
 				Respond (Gtk.ResponseType.Ok);
 				return;
 			} else if (installMonitor.Success) {
+				#if !WINDOWS
 				txt = "<b>" + warnmessage + "</b>\n\n";
 				foreach (string s in installMonitor.Warnings)
 					txt += GLib.Markup.EscapeText (s) + "\n";
+				#endif
 				response = Gtk.ResponseType.Ok;
 				buttonOk.Sensitive = true;
 			} else {
 				buttonCancel.Label = Gtk.Stock.Close;
 				buttonCancel.UseStock = true;
+				#if !WINDOWS
 				txt = "<span foreground=\"red\"><b>" + errmessage + "</b></span>\n\n";
 				foreach (string s in installMonitor.Errors)
 					txt += GLib.Markup.EscapeText (s) + "\n";
+				#endif
 				response = Gtk.ResponseType.Cancel;
 				buttonOk.Sensitive = true;
 			}
-			
+			#if !WINDOWS
 			ShowMessage (txt);
+			#endif
 		}
 		
 		void RunInstall ()

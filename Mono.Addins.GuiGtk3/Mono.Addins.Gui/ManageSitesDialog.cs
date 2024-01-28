@@ -31,7 +31,9 @@
 
 using System;
 using Gtk;
+#if !WINDOWS
 using Mono.Unix;
+#endif
 using System.Threading;
 
 using Mono.Addins.Setup;
