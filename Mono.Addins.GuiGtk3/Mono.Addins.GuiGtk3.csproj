@@ -17,6 +17,7 @@
     <Reference Include="System" />
     <Reference Include="Mono.Posix" />
     <PackageReference Include="GtkSharp" Version="3.24.24.95" />
+    <PackageReference Include="Mono.Unix" Version="7.1.0-final.1.21458.1" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="icons\download-16.png">
